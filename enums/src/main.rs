@@ -35,8 +35,6 @@ fn main() {
     if let Some(max) = config_max {
         println!("The maximum is configured to be {}", max);
     }
-
-
 }
 
 // pattern matching
