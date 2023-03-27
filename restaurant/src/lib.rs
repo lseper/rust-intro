@@ -40,7 +40,7 @@ mod back_of_house {
             }
         }
     }
-    
+
     fn fix_incorrect_order() {
         cook_order();
         // refers to parent here, so you can call it
@@ -50,12 +50,28 @@ mod back_of_house {
     fn cook_order() {}
 }
 
+use crate::front_of_house::hosting;
+
+mod customer {
+
+    use super::hosting;
+    pub fn eat_at_restaurant() {
+        // this errors, as "use" doesn't apply to the scope within the customer module!
+        // to fix, move use crate::front_of_house::hosting into customer
+        // OR reference the shortcut in the parent module with use super::hosting within the child customer module, which is done above
+        hosting::add_to_waitlist();
+    }
+}
+
 pub fn eat_at_restaurant() {
     // // Absolute path
     // crate::front_of_house::hosting::add_to_waitlist();
 
     // // Relative path
     // front_of_house::hosting::add_to_waitlist();
+
+    // shortened due to bringing hosting into scope with use
+    hosting::add_to_waitlist();
 
     // All fields of enum are public when specified enum is public
     let order1 = back_of_house::Appetizer::Soup;
