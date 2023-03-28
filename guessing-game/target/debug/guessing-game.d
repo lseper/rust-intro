@@ -1,1 +1,1 @@
-/mnt/c/Users/Liam\ Seper/Documents/GitHub/projects/learn-rust/guessing-game/target/debug/guessing-game: /mnt/c/Users/Liam\ Seper/Documents/GitHub/projects/learn-rust/guessing-game/src/main.rs
+/Users/liamseper/Documents/Github/projects/rust-intro/guessing-game/target/debug/guessing-game: /Users/liamseper/Documents/Github/projects/rust-intro/guessing-game/src/main.rs
