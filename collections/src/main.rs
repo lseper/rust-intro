@@ -1,12 +1,14 @@
 mod stats;
+use stats::{median, mode};
 
-use stats::median;
 use std::io;
 
 fn main() {
     let mut arr = receive_arr_from_user();
     let median_value = median(&mut arr).expect("Vector should not be empty! :(");
-    println!("The median of the array is: {}", median_value);
+    let mode_value = mode(&mut arr);
+    println!("Median value: {}\nMode Value: {}", median_value, mode_value);
+    println!("{:?}", arr);
 }
 
 fn receive_arr_from_user() -> Vec<i32> {
