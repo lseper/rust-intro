@@ -1,0 +1,12 @@
+[package]
+name = "erros"
+version = "0.1.0"
+edition = "2021"
+
+[profile.release]
+# causes panics to abort instead of unwind entire stack, makes binary smaller
+panic = 'abort'
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
