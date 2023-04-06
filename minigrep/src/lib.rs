@@ -1,9 +1,11 @@
 use std::fs;
 use std::error::Error;
+use std::env;
 
 pub struct Config {
     pub search_term: String,
-    pub file_name: String
+    pub file_name: String,
+    pub ignore_case: bool
 }
 
 impl Config {
@@ -15,15 +17,27 @@ impl Config {
 
         let search_term = args[1].clone();
         let file_name = args[2].clone();
+
+        let ignore_case = env::var("IGNORE_CASE").is_ok();
         
-        return Ok(Config { search_term, file_name });
+        return Ok(Config { search_term, file_name, ignore_case});
     }
 }
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(config.file_name)?;
-    println!("With text:\n{contents}");
-    return Ok(());
+
+    let results = if config.ignore_case {
+        search_case_insensitive(&config.search_term, &contents)
+    } else {
+        search(&config.search_term, &contents)
+    };
+
+    for line in results {
+        println!("{line}");
+    }
+
+    return Ok(())
 }
 
 pub fn search<'a>(terms: &str, content: &'a str) -> Vec<&'a str> {
@@ -37,6 +51,18 @@ pub fn search<'a>(terms: &str, content: &'a str) -> Vec<&'a str> {
    return results;
 }
 
+pub fn search_case_insensitive<'a>(terms: &str, content: &'a str) -> Vec<&'a str> {
+    let mut results: Vec<&str> = Vec::new();
+    let terms = terms.to_lowercase();
+
+    for line in content.lines() {
+        if line.to_lowercase().contains(&terms) {
+            results.push(line);
+        }
+    }
+   return results;
+}
+
 /* 
 Depracated - Replaced with the above Config constructor
  */
@@ -44,7 +70,7 @@ fn parse_config(args: &[String]) -> Config {
     let search_term = args[1].clone();
     let file_name = args[2].clone();
 
-    return Config { search_term, file_name }
+    return Config { search_term, file_name, ignore_case: true }
 }
 
 #[cfg(test)]
@@ -83,4 +109,35 @@ I knew not where.";
     
         assert_eq!(expected, search(term, contents));
     }
+    
+    #[test]
+    fn case_insensitivity_test() {
+        let term = "ENG";
+        let contents = "\
+If it ain't broke,
+don't fix it.
+
+An engineer would say:
+\"If it ain't broke,
+it doesn't have enough features yet\"";
+        let expected: Vec<&str> = vec!["An engineer would say:"];
+    
+        assert_eq!(expected, search_case_insensitive(term, contents));
+    }
+
+    #[test]
+    fn case_sensitivity_test() {
+        let term = "ENG";
+        let contents = "\
+If it ain't broke,
+don't fix it.
+
+An engineer would say:
+\"If it ain't broke,
+it doesn't have enough features yet\"";
+        let expected: Vec<&str> = vec![];
+    
+        assert_eq!(expected, search(term, contents));
+    }
+    
 }
